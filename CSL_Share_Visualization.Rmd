@@ -1,0 +1,120 @@
+---
+title: "CSL_Share_Visualization"
+author: "AlistairGJ"
+date: "07/10/2017"
+output: html_document
+---
+## Loading the packages and importing the dataset
+
+```{r}
+library(car)
+library(ggplot2)
+library(dplyr)
+library(gsheet)
+library(gridExtra)
+library("htmltools")
+library(reshape2)
+CSL_SharePrice <- gsheet2tbl('https://docs.google.com/spreadsheets/d/1VYbe48xCDS54DXHmrrMQ6THQFsWiUhaC9gN6tg53v1I/edit?usp=sharing')
+CSL_SharePrice_KeyDates <- gsheet2tbl('https://docs.google.com/spreadsheets/d/1iFFr1RI2qn68flT-L8rB105GGNeKPWWz8sN8VgQphKc/edit?usp=sharing')
+```
+
+## Checking the data
+
+```{r}
+summary(CSL_SharePrice)
+```
+
+```{r}
+sapply(CSL_SharePrice, typeof)
+```
+
+Data is of the correct types required with no NaN present.
+
+## Basic Line Plot
+
+```{r}
+CSL_AdjClosePlot <- ggplot(data=CSL_SharePrice, aes(x=Date, y=CSL_SharePrice$`Adj Close`, colour=I("Red"))) +
+  geom_line() +
+  labs(title = 'CSL Limited Adjust Close Share Price from 31 May 1994 till 14 Sep 2017',  
+       y = 'Adjusted Close (AUD)', 
+       x = NULL) +
+  theme(legend.title = element_blank())
+CSL_AdjClosePlot
+```
+
+## Adding Fill 
+
+```{r}
+minCSL_Share <- min(CSL_SharePrice$Date)
+maxCSL_Share <- max(CSL_SharePrice$Date)
+CSL_AdjClosePlot <- CSL_AdjClosePlot + geom_area(aes(fill="Red")) + theme(legend.position="none") + scale_y_continuous(breaks=seq(0,145,15))
+CSL_AdjClosePlot
+ggsave("CSL_Shares.png", plot = CSL_AdjClosePlot, width = 16, height = 6.5, units = c("in"), dpi = 450)
+```
+
++ scale_x_date(date_breaks = "2 year", date_minor_breaks = "2 year", date_labels = "%A")
+
+geom_vline(xintercept=as.numeric(as.Date("2002-11-01")))
+
+ scale_x_date(breaks = CSL_dates)
+
+## Adding Labels
+
+https://docs.google.com/spreadsheets/d/1iFFr1RI2qn68flT-L8rB105GGNeKPWWz8sN8VgQphKc/edit?usp=sharing
+
+```{r}
+CSL_dates = as.Date(c("1994-09-01", "1998-06-19", "1999-09-01", "2000-07-01", "2001-06-01", "2004-03-31", 
+                      "2005-01-19", "2006-06-08", "2006-07-17", "2007-03-20", "2015-08-03", "2016-03-07"))
+CSL_AdjClosePlot + geom_vline(aes(xintercept=as.numeric(as.Date("1994-09-01", "1998-06-30", "1999-09-01", "2000-07-01", "2001-06-01", "2004-03-31", "2005-01-19", "2006-06-08", "2006-07-17", "2007-03-20", "2015-08-03", "2016-03-07"))))
+```
+
+
+```{r}
+CSL_KeyDatesPlot <- ggplot(CSL_SharePrice[CSL_event_filter,] + aes(x=Date, y=CSL_SharePrice$`Adj Close`))
+  geom_col() +
+  labs(title = NULL, y = NULL, x = NULL) +
+  theme(legend.title = element_blank())
+CSL_KeyDatesPlot
+CSL_AdjClosePlot + CSL_KeyDatesPlot + scale_y_continuous(breaks=seq(0,145,15))
+
+CSL_event_filter <- CSL_SharePrice$Event == "1"
+KeyDate_Date <- CSL_SharePrice[CSL_event_filter,]
+
+
+```
+
+
+ggplot(data=df26, aes(x=Month, y=C1, group=Year, colour=factor(Year))) + 
+    geom_line(size=.75) + geom_point() + 
+    scale_x_discrete(limits=c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")) + 
+    scale_y_continuous(labels=comma) + 
+    scale_colour_manual(values=cPalette, name="Year") + 
+    ylab("Volume") +
+    geom_line(data = df26means, aes(group = 1), size = 1.25, color = "black")
+
+
+Privatization marked a significant shift in the strategy and culture of CSL.
+1994 - CSL acquires US-based cell culture company JRH Biosciences for A$27 million; an important  first step towards globalisation
+1998 - CSL acquires US-based Animal Health business Biocor from Bayer for A$15 million
+2000 - CSL acquires ZLB from the Swiss Red Cross for A$930 million; a major step towards global leadership in plasma therapeutics.
+2001 - CSL acquires 47 plasma donor centres and testing facilities from US-based Nabi for A$317 million and creates ZLB Plasma Services.
+2004 - CSL acquires Aventis Behring for A$1.23 billion, combining it with ZLB operations to create CSL Behring, a global leader in biotherapeutics.
+
+2005 - CSL divests JRH Biosciences for A$458 million and its Animal Health business for A$162 million.
+2006 - CSL acquires Melbourne biotech company Zenyth Therapeutics for A$104 million, strengthening CSL’s pipeline and recombinant protein capabilities. The FDA approves the world’s first HPV vaccine, GARDASIL® which goes on to deliver royalties to CSL of up to A$100 million each year.
+2007 - CSL’s share price breaks through the A$100 mark and the company undertakes a 3-for-1 share split.
+2015 - CSL acquires the Novartis in uenza vaccine business for US$275 million, combining it with bioCSL to create Seqirus, the world’s second-largest flu vaccine manufacturer.
+2016 - CSL Behring achieves major regulatory milestones for its novel recombinant therapies, starting with the approval of IDELVION®, a long-acting clotting factor for patients with haemophilia B and AFSTYLA®, the first and only single-chain product for haemophilia A. CSL celebrates its centenary as a A$50 billion global biotherapeutics leader, employing over 16,000 people in more than 30 countries and serving patients all around the world.
+
+## I
+
+
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
