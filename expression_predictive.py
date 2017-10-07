@@ -8,6 +8,14 @@ import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.style.use('ggplot')
 import urllib2
+from sklearn.cross_validation import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.metrics import mean_squared_error
+from sklearn.cross_validation import train_test_split
+import os
 
 # In[5] Creating string abbreviation of URL
 url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00342/Data_Cortex_Nuclear.xls"
@@ -179,7 +187,19 @@ scatter_matrix(scatterProteins, alpha=0.2,figsize=(16,16),diagonal='hist')
 plt.show()
 
 # In[]
+targetProteins.describe()
 
+# In[]
+targetProteins['Genotype'].value_counts()
+
+# In[]
+targetProteins['Treatment'].value_counts()
+
+# In[]
+targetProteins['Behavior'].value_counts()
+
+# In[]
+targetProteins['Class'].value_counts()
 
     
 # In[]
@@ -187,4 +207,436 @@ plt.show()
 
 
 # In[]:
+
+#Task 3: Data Modelling (Classification)
+
+#Classification 1: K Nearest Neighbor
+
+    
+# In[]
+
+#Using SOD1, Genotype & Treatment to predict Behavior
+#Function for classification
+targetProteins_SOD1 = targetProteins[['SOD1_N', 'Genotype', 'Treatment']]
+targetProteins_SOD1.dtypes
+targetProteins_SOD1.describe()
+X_train, X_test, y_train, y_test = train_test_split(targetProteins_SOD1, targetProteins['Behavior'], test_size=0.4)
+X_train.shape
+y_train.shape
+
+# In[] Analysis: 5 neighbours - Using SOD1, Genotype & Treatment to predict Behavior
+clf = KNeighborsClassifier(5)
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "5 neighbours predicted: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[] Analysis: 2 neighbours - Using SOD1, Genotype & Treatment to predict Behavior
+clf = KNeighborsClassifier(2)
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "2 neighbours predicted: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[] Analysis: 8 neighbours - Using SOD1, Genotype & Treatment to predict Behavior
+clf = KNeighborsClassifier(8)
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "8 neighbours predicted: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[] Regression - Input SOD1_N, S6_N, GFAP_N with Output CaNA_N
+targetProteins_regression = targetProteins[['SOD1_N', 'S6_N', 'GFAP_N']]
+X_train, X_test, y_train, y_test = train_test_split(targetProteins_regression, targetProteins['CaNA_N'], test_size=0.2)
+X_train.shape
+y_train.shape
+
+# In[]
+regressor = DecisionTreeRegressor()
+fit = regressor.fit(X_train, y_train)
+y_pred = regressor.predict(X_test)
+mse_CaNA_N = mean_squared_error(y_test, y_pred)
+print mse_CaNA_N
+print classification_report (y_test, mse_CaNA_N)
+
+# In[] Regression - Input pNUMB_N, S6_N with Output CaNA_N
+targetProteins_regression = targetProteins[['pNUMB_N', 'S6_N']]
+X_train, X_test, y_train, y_test = train_test_split(targetProteins_regression, targetProteins['CaNA_N'], test_size=0.2)
+X_train.shape
+y_train.shape
+
+# In[]
+regressor = DecisionTreeRegressor()
+fit = regressor.fit(X_train, y_train)
+y_pred = regressor.predict(X_test)
+mse_CaNA_N = mean_squared_error(y_test, y_pred)
+print mse_CaNA_N
+print classification_report (y_test, mse_CaNA_N)
+
+
+# In[] Regression - Input S6_N with Output CaNA_N
+targetProteins_regression = targetProteins[['S6_N']]
+X_train, X_test, y_train, y_test = train_test_split(targetProteins_regression, targetProteins['CaNA_N'], test_size=0.2)
+X_train.shape
+y_train.shape
+
+# In[]
+regressor = DecisionTreeRegressor()
+fit = regressor.fit(X_train, y_train)
+y_pred = regressor.predict(X_test)
+mse_CaNA_N = mean_squared_error(y_test, y_pred)
+print mse_CaNA_N
+print classification_report (y_test, mse_CaNA_N)
+
+# In[] Using ITSN1, Genotype & Treatment to predict Behavior
+targetProteins_ITSN1 = targetProteins[['ITSN1_N', 'Genotype', 'Treatment']]
+X_train, X_test, y_train, y_test = train_test_split(targetProteins_ITSN1, targetProteins['Behavior'], test_size=0.2)
+X_train.shape
+y_train.shape
+
+# In[]
+
+#Analysis: 5 neighbours
+clf = KNeighborsClassifier(5)
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "5 neighbours predicted: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[]
+
+#Analysis: 2 neighbours
+clf = KNeighborsClassifier(2)
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "2 neighbours predicted: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[]
+
+#Analysis: 8 neighbours
+clf = KNeighborsClassifier(8)
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "8 neighbours predicted: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[]
+
+#Analysis: 5 neighbours, distance weighted
+clf = KNeighborsClassifier(5, weights='distance')
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "5 neighbours, distance weighted predicted: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[]
+#Analysis: 8 neighbours, distance weighted
+clf = KNeighborsClassifier(8, weights='distance')
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "8 neighbours, distance weighted predicted: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[]
+#Analysis: 5 neighbours, distance weighted, p=1
+clf = KNeighborsClassifier(5, weights='distance', p=1)
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "5 neighbours, distance weighted predicted, p=1: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[]
+
+#Analysis: 8 neighbours, distance weighted, p=1
+clf = KNeighborsClassifier(8, weights='distance', p=1)
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "8 neighbours, distance weighted predicted, p=1: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[]
+
+#Use all protein expression levels to clasify class
+targetProteins_class = targetProteins[['BRAF_N', 'pERK_N', 'S6_N', 'pGSK3B_N', 'CaNA_N', 'CDK5_N', 'pNUMB_N', 'DYRK1A_N', 'ITSN1_N', 'SOD1_N', 'GFAP_N']]
+X_train, X_test, y_train, y_test = train_test_split(targetProteins_class, targetProteins['Class'], test_size=0.2)
+print X_train.shape
+print y_train.shape
+
+# In[]
+
+#Analysis: 5 neighbours
+clf = KNeighborsClassifier(5)
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "5 neighbours predicted: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[]
+
+#Analysis: 2 neighbours
+clf = KNeighborsClassifier(2)
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "2 neighbours predicted: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[]
+
+#Analysis: 8 neighbours
+clf = KNeighborsClassifier(8)
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "8 neighbours predicted: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[]
+
+
+#Analysis: 5 neighbours, distance weighted
+clf = KNeighborsClassifier(5, weights='distance')
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "5 neighbours, distance weighted predicted: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[]
+
+#Analysis: 8 neighbours, distance weighted
+clf = KNeighborsClassifier(8, weights='distance')
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "8 neighbours, distance weighted predicted: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[]
+
+
+#Analysis: 5 neighbours, distance weighted, p=1
+clf = KNeighborsClassifier(5, weights='distance', p=1)
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "5 neighbours, distance weighted predicted, p=1: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[]
+
+#Analysis: 8 neighbours, distance weighted, p=1
+clf = KNeighborsClassifier(8, weights='distance', p=1)
+fit = clf.fit(X_train, y_train)
+predicted = fit.predict(X_test)
+cm = confusion_matrix(y_test, predicted)
+print "8 neighbours, distance weighted predicted, p=1: "
+print cm
+print classification_report (y_test, predicted)
+
+# In[]
+
+#Classification 2: Decision Tree
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.cross_validation import train_test_split
+from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
+from sklearn import tree
+import os
+
+import pandas as pd
+
+df = pd.read_csv("finalData.csv")
+df_class = df[['BRAF_N', 'pERK_N', 'S6_N', 'pGSK3B_N', 'CaNA_N', 'CDK5_N', 'pNUMB_N', 'DYRK1A_N', 'ITSN1_N', 'SOD1_N', 'GFAP_N', 'Class']]
+
+y = df_class.pop('Class')
+X = df_class
+
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2, random_state = 0)
+
+#X_train, X_test, y_train, y_test = train_test_split(proteins, proteins, random_state = 0)
+clf = DecisionTreeClassifier()
+fit = clf.fit(X_train, y_train)
+
+y_pre = fit.predict(X_test)
+cm = confusion_matrix(y_test, y_pre)
+
+print "Class"
+print cm
+print classification_report(y_test, y_pre)
+with open("class_tree.dot", 'w') as f:
+    f = tree.export_graphviz(clf, out_file=f,
+                             feature_names=['BRAF_N', 'pERK_N', 'S6_N', 'pGSK3B_N', 'CaNA_N', 'CDK5_N', 'pNUMB_N',
+                                            'DYRK1A_N', 'ITSN1_N', 'SOD1_N', 'GFAP_N'], class_names="01234567",
+                             filled=True, rounded=True, special_characters=True)
+os.system("dot class_tree.dot -o class_tree.png -Tpng")
+
+####
+
+df_genotype = df[['BRAF_N', 'pERK_N', 'S6_N', 'pGSK3B_N', 'CaNA_N', 'CDK5_N', 'pNUMB_N', 'DYRK1A_N', 'ITSN1_N', 'SOD1_N', 'GFAP_N', 'Genotype']]
+
+y = df_genotype.pop('Genotype')
+X = df_genotype
+
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2, random_state = 0)
+
+#X_train, X_test, y_train, y_test = train_test_split(proteins, proteins, random_state = 0)
+clf = DecisionTreeClassifier()
+fit = clf.fit(X_train, y_train)
+
+y_pre = fit.predict(X_test)
+cm = confusion_matrix(y_test, y_pre)
+
+print "Genotype"
+print cm
+print classification_report(y_test, y_pre)
+with open("genotype_tree.dot", 'w') as f:
+    f = tree.export_graphviz(clf, out_file=f,
+                             feature_names=['BRAF_N', 'pERK_N', 'S6_N', 'pGSK3B_N', 'CaNA_N', 'CDK5_N', 'pNUMB_N',
+                                            'DYRK1A_N', 'ITSN1_N', 'SOD1_N', 'GFAP_N'], class_names="01",
+                             filled=True, rounded=True, special_characters=True)
+os.system("dot genotype_tree.dot -o genotype_tree.png -Tpng")
+
+
+####
+
+df_behavior = df[['BRAF_N', 'pERK_N', 'S6_N', 'pGSK3B_N', 'CaNA_N', 'CDK5_N', 'pNUMB_N', 'DYRK1A_N', 'ITSN1_N', 'SOD1_N', 'GFAP_N', 'Behavior']]
+
+y = df_behavior.pop('Behavior')
+X = df_behavior
+
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2, random_state = 0)
+
+#X_train, X_test, y_train, y_test = train_test_split(proteins, proteins, random_state = 0)
+clf = DecisionTreeClassifier()
+fit = clf.fit(X_train, y_train)
+
+y_pre = fit.predict(X_test)
+cm = confusion_matrix(y_test, y_pre)
+
+print "Behavior"
+print cm
+print classification_report(y_test, y_pre)
+with open("behavior_tree.dot", 'w') as f:
+    f = tree.export_graphviz(clf, out_file=f,
+                             feature_names=['BRAF_N', 'pERK_N', 'S6_N', 'pGSK3B_N', 'CaNA_N', 'CDK5_N', 'pNUMB_N',
+                                            'DYRK1A_N', 'ITSN1_N', 'SOD1_N', 'GFAP_N'], class_names="01",
+                             filled=True, rounded=True, special_characters=True)
+os.system("dot behavior_tree.dot -o behavior_tree.png -Tpng")
+
+
+####
+
+df_treatment = df[['BRAF_N', 'pERK_N', 'S6_N', 'pGSK3B_N', 'CaNA_N', 'CDK5_N', 'pNUMB_N', 'DYRK1A_N', 'ITSN1_N', 'SOD1_N', 'GFAP_N', 'Treatment']]
+
+y = df_treatment.pop('Treatment')
+X = df_treatment
+
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2, random_state = 0)
+
+#X_train, X_test, y_train, y_test = train_test_split(proteins, proteins, random_state = 0)
+clf = DecisionTreeClassifier()
+fit = clf.fit(X_train, y_train)
+
+y_pre = fit.predict(X_test)
+cm = confusion_matrix(y_test, y_pre)
+
+print "Treatment"
+print cm
+print classification_report(y_test, y_pre)
+with open("treatment_tree.dot", 'w') as f:
+    f = tree.export_graphviz(clf, out_file=f,
+                             feature_names=['BRAF_N', 'pERK_N', 'S6_N', 'pGSK3B_N', 'CaNA_N', 'CDK5_N', 'pNUMB_N',
+                                            'DYRK1A_N', 'ITSN1_N', 'SOD1_N', 'GFAP_N'],
+                             class_names=["Mamantine","Saline"],
+                             filled=True, rounded=True, special_characters=True)
+os.system("dot treatment_tree.dot -o treatment_tree.png -Tpng")
+
+####
+
+df_class_braf = df[['BRAF_N','Class']]
+
+y = df_class_braf.pop('Class')
+X = df_class_braf
+
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2, random_state = 0)
+
+#X_train, X_test, y_train, y_test = train_test_split(proteins, proteins, random_state = 0)
+clf = DecisionTreeClassifier()
+fit = clf.fit(X_train, y_train)
+
+y_pre = fit.predict(X_test)
+cm = confusion_matrix(y_test, y_pre)
+
+print "Class by BRAF"
+print cm
+print classification_report(y_test, y_pre)
+with open("classbybraf_tree.dot", 'w') as f:
+    f = tree.export_graphviz(clf, out_file=f,
+                             feature_names=['BRAF_N'], class_names="01234567",
+                             filled=True, rounded=True, special_characters=True)
+os.system("dot classbybraf_tree.dot -o classbybraf_tree.png -Tpng")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
