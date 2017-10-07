@@ -1,21 +1,16 @@
-# In[1] Importing the data analysis library pandas
+
+
+
+# In[1] Importing the libraries
 import pandas as pd
-
-# In[2] Importing scientific computing library numpy
 import numpy as np
-
-# In[3] Importing the python plotting library matplotlib
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.style.use('ggplot')
-
-# In[4] Importing the library for opening URLs
 import urllib2
 
 # In[5] Creating string abbreviation of URL
 url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00342/Data_Cortex_Nuclear.xls"
-
-# In[6]
 proteinExpression = pd.read_excel(urllib2.urlopen(url), headers=0)
 
 # In[7] Checking the column (attribute) names - exploring data with a list
@@ -184,40 +179,12 @@ scatter_matrix(scatterProteins, alpha=0.2,figsize=(16,16),diagonal='hist')
 plt.show()
 
 # In[]
-# Write this dataframe to a CSV file for later use
-targetProteins.to_csv("finalData.csv")
 
-# Create a dataframe of the average value of each protein for each mouse
-mouseRows = []
-for mouseID in miceIDs:
-    row = {}
-    row['MouseID'] = mouseID
-    for proteinName in proteinNames:
-        row[proteinName] = targetProteins[targetProteins['MouseID'].str.contains(mouseID)][proteinName].mean()
-
-    row['Genotype'] = targetProteins[targetProteins['MouseID'].str.contains(mouseID)]['Genotype'].iloc[0]
-    row['Treatment'] = targetProteins[targetProteins['MouseID'].str.contains(mouseID)]['Treatment'].iloc[0]
-    row['Behavior'] = targetProteins[targetProteins['MouseID'].str.contains(mouseID)]['Behavior'].iloc[0]
-    row['Class'] = targetProteins[targetProteins['MouseID'].str.contains(mouseID)]['Class'].iloc[0]
-    mouseRows.append(row)
-
-cols = proteinNames + ['Genotype', 'Treatment', 'Behavior', 'Class']
-
-miceDF = pd.DataFrame(mouseRows, index=miceIDs, columns=cols)
-
-print miceDF
-
-# Write this dataframe to a CSV file for later use
-miceDF.to_csv('miceAverages.csv')
 
     
 # In[]
 
 
 
-# In[17]:
+# In[]:
 
-scatterProteins2 = miceDF[['BRAF_N', 'pERK_N', 'S6_N', 'pGSK3B_N', 'CaNA_N', 'CDK5_N', 'pNUMB_N', 'DYRK1A_N', 'ITSN1_N', 'SOD1_N', 'GFAP_N']]
-scatter_matrix(scatterProteins2, alpha=0.2,figsize=(16,16),diagonal='hist')
-plt.suptitle('Cleaned Data with Average per Mouse per Protein Scatter Matrix')
-plt.show()
