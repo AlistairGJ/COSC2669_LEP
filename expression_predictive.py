@@ -13,6 +13,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import mean_squared_error
 from sklearn.cross_validation import train_test_split
 import os
@@ -294,6 +295,22 @@ mse_CaNA_N = mean_squared_error(y_test, y_pred)
 print mse_CaNA_N
 print classification_report (y_test, mse_CaNA_N)
 
+# In[] Regression - Input S6_N with Output CaNA_N
+targetProteins_regression = targetProteins[['S6_N', 'pGSK3B_N', 'CDK5_N', 'pGSK3B_N']]
+X_train, X_test, y_train, y_test = train_test_split(targetProteins_regression, targetProteins['CaNA_N'], test_size=0.2)
+X_train.shape
+y_train.shape
+
+# In[]
+regressor = DecisionTreeRegressor()
+fit = regressor.fit(X_train, y_train)
+y_pred = regressor.predict(X_test)
+mse_CaNA_N_NEW = mean_squared_error(y_test, y_pred)
+print mse_CaNA_N_NEW
+print classification_report (y_test, mse_CaNA_N_NEW)
+
+
+
 # In[] Using ITSN1, Genotype & Treatment to predict Behavior
 targetProteins_ITSN1 = targetProteins[['ITSN1_N', 'Genotype', 'Treatment']]
 X_train, X_test, y_train, y_test = train_test_split(targetProteins_ITSN1, targetProteins['Behavior'], test_size=0.2)
@@ -474,8 +491,9 @@ import os
 
 import pandas as pd
 
-df = pd.read_csv("finalData.csv")
-df_class = df[['BRAF_N', 'pERK_N', 'S6_N', 'pGSK3B_N', 'CaNA_N', 'CDK5_N', 'pNUMB_N', 'DYRK1A_N', 'ITSN1_N', 'SOD1_N', 'GFAP_N', 'Class']]
+# In[] 
+
+df_class = targetProteins[['BRAF_N', 'pERK_N', 'S6_N', 'pGSK3B_N', 'CaNA_N', 'CDK5_N', 'pNUMB_N', 'DYRK1A_N', 'ITSN1_N', 'SOD1_N', 'GFAP_N', 'Class']]
 
 y = df_class.pop('Class')
 X = df_class
@@ -492,6 +510,13 @@ cm = confusion_matrix(y_test, y_pre)
 print "Class"
 print cm
 print classification_report(y_test, y_pre)
+
+
+# In[]
+
+print "Class"
+print cm
+print classification_report(y_test, y_pre)
 with open("class_tree.dot", 'w') as f:
     f = tree.export_graphviz(clf, out_file=f,
                              feature_names=['BRAF_N', 'pERK_N', 'S6_N', 'pGSK3B_N', 'CaNA_N', 'CDK5_N', 'pNUMB_N',
@@ -501,7 +526,9 @@ os.system("dot class_tree.dot -o class_tree.png -Tpng")
 
 ####
 
-df_genotype = df[['BRAF_N', 'pERK_N', 'S6_N', 'pGSK3B_N', 'CaNA_N', 'CDK5_N', 'pNUMB_N', 'DYRK1A_N', 'ITSN1_N', 'SOD1_N', 'GFAP_N', 'Genotype']]
+# In[]
+
+df_genotype = targetProteins[['BRAF_N', 'pERK_N', 'S6_N', 'pGSK3B_N', 'CaNA_N', 'CDK5_N', 'pNUMB_N', 'DYRK1A_N', 'ITSN1_N', 'SOD1_N', 'GFAP_N', 'Genotype']]
 
 y = df_genotype.pop('Genotype')
 X = df_genotype
@@ -518,6 +545,8 @@ cm = confusion_matrix(y_test, y_pre)
 print "Genotype"
 print cm
 print classification_report(y_test, y_pre)
+
+# In[]
 with open("genotype_tree.dot", 'w') as f:
     f = tree.export_graphviz(clf, out_file=f,
                              feature_names=['BRAF_N', 'pERK_N', 'S6_N', 'pGSK3B_N', 'CaNA_N', 'CDK5_N', 'pNUMB_N',
